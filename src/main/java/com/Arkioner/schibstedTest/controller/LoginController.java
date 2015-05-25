@@ -7,6 +7,7 @@ import main.java.com.Arkioner.schibstedTest.core.http.HttpRedirect;
 import main.java.com.Arkioner.schibstedTest.core.security.service.UserTokenService;
 import main.java.com.Arkioner.schibstedTest.core.security.token.InMemoryUserTokenRepository;
 import main.java.com.Arkioner.schibstedTest.core.security.token.UserToken;
+import main.java.com.Arkioner.schibstedTest.core.view.ViewHandler;
 import main.java.com.Arkioner.schibstedTest.model.User.InMemoryUserRepository;
 import main.java.com.Arkioner.schibstedTest.model.User.User;
 import main.java.com.Arkioner.schibstedTest.model.User.UserNotFoundException;
@@ -42,17 +43,10 @@ public class LoginController {
         HttpRedirect.getInstance().sendRedirect(exchange, user.getLandingPage());
     }
     public void loginFormAction(HttpExchange exchange) throws IOException {
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("main/java/com/Arkioner/schibstedTest/view/login.html");
-        final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        final StringBuilder response = new StringBuilder();
-        while (bufferedReader.ready())
-        {
-            response.append(bufferedReader.readLine());
-        }
+        String response = ViewHandler.getInstance().loadView("login");
         exchange.sendResponseHeaders(200, response.length());
         OutputStream os = exchange.getResponseBody();
-        os.write(response.toString().getBytes());
+        os.write(response.getBytes());
         os.close();
     }
 }

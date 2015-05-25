@@ -22,9 +22,6 @@ public class SecurityFilter extends Filter{
     public void doFilter(HttpExchange exchange, Chain chain) throws IOException {
         String path = exchange.getRequestURI().getPath().toLowerCase();
         switch (path){
-            case "/login":
-                //return;
-                break;
             case "/private/page1":
                 if(!checkSecurity(exchange,RolEnum.ROL_1)){
                     return;
@@ -41,7 +38,6 @@ public class SecurityFilter extends Filter{
                 }
                 break;
         }
-        System.out.println("SecurityChecked");
         chain.doFilter(exchange);
     }
 
