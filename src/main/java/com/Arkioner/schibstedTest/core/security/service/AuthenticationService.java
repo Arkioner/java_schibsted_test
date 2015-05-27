@@ -18,7 +18,7 @@ public class AuthenticationService {
         return instance;
     }
 
-    public UserToken getAuthentication(HttpExchange exchange) throws UserTokenNotFoundException {
+    public UserToken getAuthentication(HttpExchange exchange) throws UserTokenNotFoundException, AuthenticationExpiredException {
         String tokenId = HttpCookie.getInstance().getCookie(exchange, UserTokenService.SECURITY_COOKIE_KEY);
         return UserTokenService.getInstance().getUserToken(tokenId);
     }

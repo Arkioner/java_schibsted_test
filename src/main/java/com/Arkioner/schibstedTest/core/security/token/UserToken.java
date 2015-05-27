@@ -42,4 +42,8 @@ public class UserToken
     public void setUser(User user) {
         this.user = user;
     }
+
+    public boolean isExpired() {
+        return (1 > expires.compareTo(new Date()));
+    }
 }

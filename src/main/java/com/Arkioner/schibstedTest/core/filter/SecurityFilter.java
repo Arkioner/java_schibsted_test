@@ -4,6 +4,7 @@ import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 import main.java.com.Arkioner.schibstedTest.core.http.HttpRedirect;
 import main.java.com.Arkioner.schibstedTest.core.http.HttpUnauthorized;
+import main.java.com.Arkioner.schibstedTest.core.security.service.AuthenticationExpiredException;
 import main.java.com.Arkioner.schibstedTest.core.security.service.AuthenticationService;
 import main.java.com.Arkioner.schibstedTest.core.security.service.AuthorizationDeniedException;
 import main.java.com.Arkioner.schibstedTest.core.security.service.AuthorizationService;
@@ -52,16 +53,19 @@ public class SecurityFilter extends Filter{
             userToken = checkAuthentication(exchange);
             checkAuthorization(userToken, rol);
         } catch (UserTokenNotFoundException e) {
-            HttpRedirect.getInstance().sendRedirect(exchange, "/login");
+            HttpRedirect.getInstance().sendRedirect(exchange, "/login?notAuthenticated");
             return false;
         } catch (AuthorizationDeniedException e) {
             HttpUnauthorized.getInstance().sendUnathorized(exchange);
+            return false;
+        } catch (AuthenticationExpiredException e) {
+            HttpRedirect.getInstance().sendRedirect(exchange, "/login?expiredSession");
             return false;
         }
         return true;
     }
 
-    private UserToken checkAuthentication(HttpExchange exchange) throws UserTokenNotFoundException {
+    private UserToken checkAuthentication(HttpExchange exchange) throws UserTokenNotFoundException, AuthenticationExpiredException {
         return AuthenticationService.getInstance().getAuthentication(exchange);
     }
 

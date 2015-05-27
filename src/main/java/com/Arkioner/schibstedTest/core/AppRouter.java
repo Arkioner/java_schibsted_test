@@ -19,15 +19,17 @@ import main.java.com.Arkioner.schibstedTest.core.security.service.UserTokenServi
 public class AppRouter implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String hola = HttpCookie.getInstance().getCookie(exchange, UserTokenService.SECURITY_COOKIE_KEY);
-        HttpCookie.getInstance().addCookie(exchange, "cookiesAccepted", "true");
         String path = exchange.getRequestURI().getPath().toLowerCase();
         switch (path){
             case "/login":
                 LoginController.getInstance().loginFormAction(exchange);
                 break;
             case "/login/execute":
+                HttpCookie.getInstance().addCookie(exchange, "cookiesAccepted", "true");
                 LoginController.getInstance().loginPostAction(exchange);
+                break;
+            case "/logout":
+                LoginController.getInstance().logoutAction(exchange);
                 break;
             case "/private/page1":
                 PageController.getInstance().page1Action(exchange);
