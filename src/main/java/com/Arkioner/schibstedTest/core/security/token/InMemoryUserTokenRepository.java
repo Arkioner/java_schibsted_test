@@ -19,9 +19,9 @@ public class InMemoryUserTokenRepository implements UserTokenRepositoryInterface
         return instance;
     }
 
-    public InMemoryUserTokenRepository() {
+    private InMemoryUserTokenRepository() {
 
-        this.tokens = new ArrayList();
+        this.tokens = new ArrayList<>();
 
     }
 

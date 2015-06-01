@@ -21,10 +21,8 @@ public class UserRepositoryFactory
     public UserRepositoryInterface getUserRepository()
     {
         if(null == instanceRepository){
-            instanceRepository = new InMemoryUserRepository();
+            instanceRepository = InMemoryUserRepository.getInstance();
         }
         return instanceRepository;
     }
-
-
 }

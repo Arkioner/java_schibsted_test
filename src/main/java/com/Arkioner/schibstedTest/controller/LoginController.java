@@ -4,6 +4,8 @@ import com.sun.net.httpserver.HttpExchange;
 import main.java.com.Arkioner.schibstedTest.core.http.HttpCookie;
 import main.java.com.Arkioner.schibstedTest.core.http.HttpParameters;
 import main.java.com.Arkioner.schibstedTest.core.http.HttpRedirect;
+import main.java.com.Arkioner.schibstedTest.core.http.HttpSession;
+import main.java.com.Arkioner.schibstedTest.core.http.session.Session;
 import main.java.com.Arkioner.schibstedTest.core.security.service.UserTokenService;
 import main.java.com.Arkioner.schibstedTest.core.security.token.InMemoryUserTokenRepository;
 import main.java.com.Arkioner.schibstedTest.core.security.token.UserToken;
@@ -12,6 +14,7 @@ import main.java.com.Arkioner.schibstedTest.core.view.ViewHandler;
 import main.java.com.Arkioner.schibstedTest.model.User.InMemoryUserRepository;
 import main.java.com.Arkioner.schibstedTest.model.User.User;
 import main.java.com.Arkioner.schibstedTest.model.User.UserNotFoundException;
+import main.java.com.Arkioner.schibstedTest.model.User.UserRepositoryFactory;
 
 import java.io.*;
 
@@ -33,13 +36,14 @@ public class LoginController {
         String password = HttpParameters.getInstance().getParameter(exchange,"password");
         User user;
         try {
-            user = InMemoryUserRepository.getInstance().findUserByUsernameAndPassword(username,password);
+            user = UserRepositoryFactory.getInstance().getUserRepository().findUserByUsernameAndPassword(username,password);
         } catch (UserNotFoundException e) {
             HttpRedirect.getInstance().sendRedirect(exchange,"/login?Error");
             return;
         }
         UserToken userToken = UserTokenService.getInstance().createUserToken(user);
-        HttpCookie.getInstance().addCookie(exchange, UserTokenService.SECURITY_COOKIE_KEY, userToken.getUuid());
+        Session session = (Session) exchange.getAttribute(HttpSession.sessionKey);
+        session.add(HttpSession.userTokenKey, userToken);
         HttpRedirect.getInstance().sendRedirect(exchange, user.getLandingPage());
     }
 
@@ -52,10 +56,13 @@ public class LoginController {
     }
 
     public void logoutAction(HttpExchange exchange) throws IOException {
-        String tokenId = HttpCookie.getInstance().getCookie(exchange, UserTokenService.SECURITY_COOKIE_KEY);
-        if(tokenId != null){
+        Session session = (Session) exchange.getAttribute(HttpSession.sessionKey);
+        HttpCookie.getInstance().expireCookie(exchange, HttpCookie.SESSION_COOKIE_KEY);
+        HttpSession.getInstance().remove(session.getUuid());
+        UserToken userToken = (UserToken) session.get(HttpSession.userTokenKey);
+        if(userToken != null){
             try {
-                UserTokenService.getInstance().expireUserToken(tokenId);
+                UserTokenService.getInstance().expireUserToken(userToken.getUuid());
             } catch (UserTokenNotFoundException e) {
                 e.printStackTrace();
             }

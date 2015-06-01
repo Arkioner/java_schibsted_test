@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class UserTokenService {
 
-    private int userTokenLive = 5*60*1000;
+    private int userTokenLive = 5*1000;
 
     private InMemoryUserTokenRepository inMemoryUserToken;
     private static UserTokenService instance;
@@ -22,8 +22,6 @@ public class UserTokenService {
     public UserTokenService() {
         this.inMemoryUserToken = InMemoryUserTokenRepository.getInstance();
     }
-
-    public static final String SECURITY_COOKIE_KEY = "userToken";
 
     public static UserTokenService getInstance()
     {
@@ -33,13 +31,8 @@ public class UserTokenService {
         return instance;
     }
 
-    public UserToken getUserToken(String tokenId) throws UserTokenNotFoundException, AuthenticationExpiredException {
-        UserToken userToken = this.inMemoryUserToken.findByUuid(tokenId);
-        if(userToken.isExpired()){
-            throw new AuthenticationExpiredException("The token is expired");
-        }
+    public void renewUserToken(UserToken userToken){
         userToken.setExpires(new Date(System.currentTimeMillis()+this.userTokenLive));
-        return userToken;
     }
 
     public void expireUserToken(String tokenId) throws UserTokenNotFoundException {
@@ -49,7 +42,7 @@ public class UserTokenService {
 
     public UserToken createUserToken(User user) {
         UserToken userToken = new UserToken(user);
-        userToken.setExpires(new Date(System.currentTimeMillis()+this.userTokenLive));
+        this.renewUserToken(userToken);
         this.inMemoryUserToken.save(userToken);
         return userToken;
     }

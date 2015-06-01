@@ -21,9 +21,9 @@ public class InMemoryUserRepository implements UserRepositoryInterface
 
     private List<User> users;
 
-    public InMemoryUserRepository()
+    private InMemoryUserRepository()
     {
-        this.users = new ArrayList<User>();
+        this.users = new ArrayList<>();
 
         User user_1 = new User(1,"user_1","pag_1",RolEnum.ROL_1, "/private/page1");
         User user_2 = new User(1,"user_2","pag_2",RolEnum.ROL_2, "/private/page2");

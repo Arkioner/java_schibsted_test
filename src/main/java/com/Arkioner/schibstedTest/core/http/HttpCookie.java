@@ -20,6 +20,9 @@ public class HttpCookie {
         return instance;
     }
 
+    public static final String SECURITY_COOKIE_KEY = "userToken";
+    public static final String SESSION_COOKIE_KEY = "sessionToken";
+
     public void addCookie(HttpExchange exchange, String key, String value) {
         exchange.getResponseHeaders().add("Set-Cookie",key+"="+value+";Path=/;");
     }
@@ -31,9 +34,9 @@ public class HttpCookie {
         }
         for (String cookies : cookiesList){
             String[] cookiesArray = cookies.split(";");
-            for (int i = 0; i < cookiesArray.length; i++) {
-                String[] cookie = cookiesArray[i].split("=");
-                if(key.equals(cookie[0].trim()) && cookie.length == 2){
+            for (String cookieInfo : cookiesArray) {
+                String[] cookie = cookieInfo.split("=");
+                if (key.equals(cookie[0].trim()) && cookie.length == 2) {
                     return cookie[1];
                 }
             }
@@ -41,7 +44,7 @@ public class HttpCookie {
         return "";
     }
 
-    public void expireCookie(HttpExchange exchange, String Key) {
-
+    public void expireCookie(HttpExchange exchange, String key) {
+        exchange.getResponseHeaders().add("Set-Cookie",key+"=;Path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT");
     }
 }

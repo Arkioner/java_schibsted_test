@@ -31,10 +31,6 @@ public class UserToken
         return user;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
     public void setExpires(Date expires) {
         this.expires = expires;
     }
@@ -44,6 +40,6 @@ public class UserToken
     }
 
     public boolean isExpired() {
-        return (1 > expires.compareTo(new Date()));
+        return expires.before(new Date());
     }
 }

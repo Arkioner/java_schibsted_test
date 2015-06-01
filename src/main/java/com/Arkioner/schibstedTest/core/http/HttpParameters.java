@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.xml.internal.ws.util.StringUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +21,10 @@ public class HttpParameters {
         return instance;
     }
 
+    public static String parameterKey = "parameters";
+
     public String getParameter(HttpExchange exchange, String key) throws IOException {
-        Map<String, Object> parameters = (Map<String, Object>) exchange.getAttribute("parameters");
+        Map<String, Object> parameters = (HashMap<String, Object>) exchange.getAttribute(parameterKey);
         Object value = parameters.get(key);
         if(value instanceof String) {
             return (String) value;

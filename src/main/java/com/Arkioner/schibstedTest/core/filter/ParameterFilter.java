@@ -2,6 +2,7 @@ package main.java.com.Arkioner.schibstedTest.core.filter;
 
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
+import main.java.com.Arkioner.schibstedTest.core.http.HttpParameters;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class ParameterFilter extends Filter {
         URI requestedUri = exchange.getRequestURI();
         String query = requestedUri.getRawQuery();
         parseQuery(query, parameters);
-        exchange.setAttribute("parameters", parameters);
+        exchange.setAttribute(HttpParameters.parameterKey, parameters);
     }
 
     private void parsePostParameters(HttpExchange exchange)
@@ -48,7 +49,7 @@ public class ParameterFilter extends Filter {
         if ("post".equalsIgnoreCase(exchange.getRequestMethod())) {
             @SuppressWarnings("unchecked")
             Map<String, Object> parameters =
-                    (Map<String, Object>)exchange.getAttribute("parameters");
+                    (Map<String, Object>)exchange.getAttribute(HttpParameters.parameterKey);
             InputStreamReader isr =
                     new InputStreamReader(exchange.getRequestBody(),"utf-8");
             BufferedReader br = new BufferedReader(isr);
