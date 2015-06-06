@@ -61,11 +61,7 @@ public class LoginController {
         HttpSession.getInstance().remove(session.getUuid());
         UserToken userToken = (UserToken) session.get(HttpSession.userTokenKey);
         if(userToken != null){
-            try {
-                UserTokenService.getInstance().expireUserToken(userToken.getUuid());
-            } catch (UserTokenNotFoundException e) {
-                e.printStackTrace();
-            }
+            UserTokenService.getInstance().expireUserToken(userToken);
         }
         HttpRedirect.getInstance().sendRedirect(exchange, "/login");
     }

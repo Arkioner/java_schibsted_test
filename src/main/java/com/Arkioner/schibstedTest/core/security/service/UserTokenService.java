@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class UserTokenService {
 
-    private int userTokenLive = 5*1000;
+    private int userTokenLive = 5*60*1000;
 
     private InMemoryUserTokenRepository inMemoryUserToken;
     private static UserTokenService instance;
@@ -35,9 +35,8 @@ public class UserTokenService {
         userToken.setExpires(new Date(System.currentTimeMillis()+this.userTokenLive));
     }
 
-    public void expireUserToken(String tokenId) throws UserTokenNotFoundException {
-        UserToken userToken = this.inMemoryUserToken.findByUuid(tokenId);
-        userToken.setExpires(new Date());
+    public void expireUserToken(UserToken userToken){
+        userToken.setExpires(new Date(0));
     }
 
     public UserToken createUserToken(User user) {

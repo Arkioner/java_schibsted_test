@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import java.util.Date;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Yoshi on 02/06/2015.
  */
@@ -16,15 +14,20 @@ public class UserTokenServiceTest extends TestCase {
     @Test
     public void testRenewUserToken() throws Exception {
         UserToken userToken = new UserToken(null);
-        Date expiration = new Date();
+        Date expiration = new Date(0);
         userToken.setExpires(expiration);
+        assertTrue("Test that the user token is expired before renew it", userToken.isExpired());
         UserTokenService.getInstance().renewUserToken(userToken);
-        assertTrue("Test that the expiration is renewed", expiration.before(userToken.getExpires()));
+        assertFalse("Test that the user token isn't expired so it is renewed", userToken.isExpired());
     }
 
     @Test
     public void testExpireUserToken() throws Exception {
-        assertTrue("Test false",true);
+        UserToken userToken = new UserToken(null);
+        Date expiration = new Date();
+        userToken.setExpires(expiration);
+        UserTokenService.getInstance().expireUserToken(userToken);
+        assertTrue("Test that the user token is expired", userToken.isExpired());
     }
 
     @Test
